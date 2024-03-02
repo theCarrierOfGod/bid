@@ -108,7 +108,7 @@ const App = () => {
                     if (value != null) {
                         checkFirstUserPage();
                     } else {
-                        setInitialName('Onboarding');
+                        setInitialName('Welcome');
                         setIsLoading(false);
                     }
                 })
@@ -181,10 +181,16 @@ const App = () => {
                     />
 
                     {/* page for returning logged in user  */}
-                    <Stack.Screen name="Returning" component={Returning} />
+                    <Stack.Screen
+                        name="Returning"
+                        component={Returning}
+                    />
 
                     {/* login page for users  */}
-                    <Stack.Screen name="SignIn" component={Login} />
+                    <Stack.Screen
+                        name="SignIn"
+                        component={Login}
+                     n/>
 
                     {/* register page for potential users  */}
                     <Stack.Screen name="SignUp" component={Register} />
@@ -466,3 +472,31 @@ const LoggedInUserNavigation = ({ navigation }) => {
         </Tab.Navigator>
     );
 }
+
+
+
+const styles = StyleSheet.create({
+    headerText: {
+        fontSize: 34,
+        fontFamily: 'Rubik-Regular',
+        fontWeight: 'bold',
+        marginTop: 10,
+        lineHeight: 35,
+        color: '#ffffff',
+    },
+    image: {
+        width: 40,
+        height: 40,
+        borderWidth: 2,
+        margin: 20,
+        marginRight: 0,
+        borderRadius: 7,
+        backgroundColor: 'white'
+    },
+    username: {
+        fontSize: 27,
+        fontFamily: 'Ubuntu-Medium',
+        textTransform: 'capitalize',
+        color: 'white'
+    }
+})
