@@ -122,7 +122,7 @@ const Login = ({ navigation }) => {
                         </Text>
                     ) : null}
 
-                    <View style={{ width: '90%', alignSelf: 'center', marginVertical: 15, flex: 0, height: 50 }}>
+                    <View style={{ width: '90%', alignSelf: 'center', marginVertical: 15, flex: 0, height: 50, display: '' }}>
                         <Ionicons name={'person-outline'} size={20} style={styles.iconLeft} color="rgba(0,0,0,0.3)" />
                         <TextInput
                             style={{
@@ -181,7 +181,7 @@ const Login = ({ navigation }) => {
                                     setSeePin(true)
                             }}
                         >
-                            <Ionicons name={seePin ? 'ios-eye-off-outline' : 'ios-eye-outline'} size={20} color="rgba(0,0,0,0.3)" />
+                            <Ionicons name={seePin ? 'eye-off' : 'eye'} size={20} color="rgba(0,0,0,0.3)" />
                         </Pressable>
                         {passwordError ? <MaterialIcons name="error" style={styles.iconRight} size={24} color="red" /> : null}
                     </View>
@@ -226,4 +226,15 @@ const Login = ({ navigation }) => {
 
 export default Login
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    iconLeft: {
+        position: 'absolute',
+        left: 8,
+        top: 12
+    },
+    iconRight: {
+        position: 'absolute',
+        right: 8,
+        top: 12
+    }
+})

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -22,6 +22,11 @@ import axios from 'axios';
 import CreatePin from './screens/User/Security/CreatePin';
 import Returning from './screens/Auth/SignIn/Returning';
 import Verify from './screens/Auth/Verify/Verify';
+import Services from './screens/User/Services/Services';
+import Wallet from './screens/User/Wallet/Wallet';
+import Profile from './screens/User/Profile/Profile';
+import Settings from './screens/User/Services/Services';
+// import ChangePassword from './screens/User/Security/ChangePassword';
 
 
 
@@ -190,7 +195,7 @@ const App = () => {
                     <Stack.Screen
                         name="SignIn"
                         component={Login}
-                     n/>
+                        n />
 
                     {/* register page for potential users  */}
                     <Stack.Screen name="SignUp" component={Register} />
@@ -226,7 +231,7 @@ const App = () => {
                         }}
                         name="ChangePassword"
                         component={ChangePassword}
-                    />
+                    /> */}
                     <Stack.Screen
                         options={{
                             title: 'Settings',
@@ -234,14 +239,14 @@ const App = () => {
                         name="Settings"
                         component={Settings}
                     />
-                    <Stack.Screen
+                    {/* <Stack.Screen
                         options={{
                             title: 'Edit Personal Information',
                         }}
                         name="EditInfo"
                         component={EditInfo}
-                    />
-                    <Stack.Screen
+                    /> */}
+                    {/* <Stack.Screen
                         options={{
                             title: 'Bidsub Help Desk',
                         }}
@@ -261,6 +266,7 @@ export default App;
 const LoggedInUserNavigation = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [dp, setDp] = useState('');
+    const [tabText, setTabTex] = useState(true);
     const [loading, setLoading] = useState(true)
     const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
@@ -281,6 +287,14 @@ const LoggedInUserNavigation = ({ navigation }) => {
                 if (response.data.data.pinset === false) {
                     navigation.replace('CreatePin')
                 }
+                AsyncStorage.getItem('tabText')
+                    .then(value => {
+                        if (value != null) {
+                            setTabTex(value)
+                        } else {
+                            setTabTex(true)
+                        }
+                    })
             }
         } catch (error) {
             console.log(error)
@@ -317,13 +331,20 @@ const LoggedInUserNavigation = ({ navigation }) => {
         <Tab.Navigator
             screenOptions={{
                 headerShown: true,
-                tabBarActiveTintColor: '#040F16',
-                tabBarShowLabel: true,
+                tabBarActiveTintColor: '#004aad',
+                tabBarShowLabel: tabText,
                 tabBarInactiveTintColor: '#fff',
+                tabBarActiveBackgroundColor: '#fff',
                 tabBarStyle: {
-                    height: 75,
+                    height: 85,
                     backgroundColor: "#004aad",
-                    paddingTop: 10
+                    marginBottom: 10,
+                    width: '94%',
+                    marginLeft: '3%',
+                    borderRadius: 40,
+                    overflow: 'hidden',
+                    borderColor: '#004aad',
+                    borderWidth: 2,
                 },
                 tabBarLabelStyle: {
                     fontSize: 13,
@@ -331,7 +352,7 @@ const LoggedInUserNavigation = ({ navigation }) => {
                     marginTop: 5,
                     fontFamily: 'Rubik-Medium',
                     textTransform: 'uppercase',
-                    color: 'white'
+                    color: 'black'
                 }
             }}
         >
@@ -398,7 +419,7 @@ const LoggedInUserNavigation = ({ navigation }) => {
                     headerShadowVisible: false
                 }}
             />
-            {/* <Tab.Screen
+            <Tab.Screen
                 name='Services'
                 component={Services}
                 options={{
@@ -447,7 +468,7 @@ const LoggedInUserNavigation = ({ navigation }) => {
             />
             <Tab.Screen
                 name='Profile'
-                component={PRofile}
+                component={Profile}
                 options={{
                     title: 'Profile',
                     tabBarIcon: ({ focused, color, size }) => (
@@ -468,7 +489,7 @@ const LoggedInUserNavigation = ({ navigation }) => {
                     },
                     headerShadowVisible: false,
                 }}
-            /> */}
+            />
         </Tab.Navigator>
     );
 }
