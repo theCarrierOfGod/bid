@@ -11,7 +11,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
 import * as Updates from 'expo-updates';
-import { NavigationContainer } from '@react-navigation/native';
+import { Link, NavigationContainer } from '@react-navigation/native';
 import FirstScreen from './screens/Onboarding/FirstScreen';
 import Welcome from './screens/Onboarding/Welcome';
 import Login from './screens/Auth/SignIn/Login';
@@ -25,8 +25,9 @@ import Verify from './screens/Auth/Verify/Verify';
 import Services from './screens/User/Services/Services';
 import Wallet from './screens/User/Wallet/Wallet';
 import Profile from './screens/User/Profile/Profile';
-import Settings from './screens/User/Services/Services';
-// import ChangePassword from './screens/User/Security/ChangePassword';
+import Settings from './screens/User/Security/Settings';
+import Airtime from './screens/User/Services/Airtime/Airtime';
+import Data from './screens/User/Services/Data/Data';
 
 
 
@@ -166,6 +167,46 @@ const App = () => {
                 }}
             >
                 <Stack.Screen name="Home" options={{ headerShown: false }} component={LoggedInUserNavigation} />
+                <Stack.Group
+                    screenOptions={{
+                        headerShown: true,
+                        headerStyle: {
+                            backgroundColor: '#004AAD',
+                        },
+                        headerBackTitleStyle: {
+                            color: 'white',
+
+                        },
+                        headerShadowVisible: false,
+                        headerLeft: () => {
+                            return (
+                                <Link
+                                    to="/Home/Services"
+                                >
+                                    <MaterialCommunityIcons name="chevron-left-box-outline" size={30} style={{ margin: 8, padding: 2, textAlign: 'center', flex: 0, height: 30, alignItems: 'center', justifyContent: 'center', }} color="white" />
+                                </Link>
+                            )
+                        },
+                        headerTitleStyle: {
+                            color: '#fff',
+                        }
+                    }}
+                >
+                    <Stack.Screen
+                        name="Airtime"
+                        options={{
+                            title: 'Airtime Purchase'
+                        }}
+                        component={Airtime}
+                    />
+                    <Stack.Screen
+                        name="Data"
+                        options={{
+                            title: 'Data Purchase'
+                        }}
+                        component={Data}
+                    />
+                </Stack.Group>
                 <Stack.Group screenOptions={{ headerShown: false }}>
                     {/* initial page on initial app launch */}
                     <Stack.Screen
