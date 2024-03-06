@@ -3,13 +3,14 @@ import React, { useEffect, useState } from 'react'
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import axios from 'axios';
 import query from '../../../constants/query';
 import SubmitButton from '../../../constants/SubmitButton';
+import SuccessBox from '../Profile/components/SuccessBox';
 
 const ChangePassword = ({ navigation }) => {
     const isFocused = useIsFocused();
+    const [token, setToken] = useState('');
     const [username, setUsername] = useState('');
 
     const [oldPassword, setOldPassword] = useState('');
@@ -31,6 +32,7 @@ const ChangePassword = ({ navigation }) => {
 
     const handleSub = async () => {
         setLoading(true)
+        setAlertMsg('');
         setOldPasswordError(null)
         setPasswordCError(null);
         setPasswordError(null);
@@ -57,21 +59,31 @@ const ChangePassword = ({ navigation }) => {
             return;
         }
         const data = {
-            op: oldPassword,
-            username: username,
-            np: password,
-            cnp: cpassword,
+            password: oldPassword,
+            new_password: password,
+            confirm_new_password: cpassword,
         }
         try {
-            const response = await axios.post(`${query.baseUrl}profile/password/update`, data);
+            const response = await axios.put(`${query.baseUrl}user`, data, {
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            });
             if (response.data.success) {
                 setShowAlert(true)
-                setAlertMsg(response.data.success)
+                setAlertMsg("Password Updated");
+                setCPassword('');
+                setOldPassword('');
+                setPassword('')
+                setTimeout(() => {
+                    navigation.navigate('Profile');
+                }, 1500);
             } else {
                 setOldPasswordError(response.data.error);
             }
         } catch (error) {
-            console.log(error)
+            console.log(error.data);
+            setAlertMsg(error.response.data.message)
         } finally {
             setLoading(false)
         }
@@ -79,10 +91,10 @@ const ChangePassword = ({ navigation }) => {
 
     const getUsername = async () => {
         try {
-            await AsyncStorage.getItem('UserName')
+            await AsyncStorage.getItem('isLoggedIn')
                 .then(value => {
                     if (value != null) {
-                        setUsername(value)
+                        setToken(value)
                     }
                 })
         } catch (error) {
@@ -102,19 +114,7 @@ const ChangePassword = ({ navigation }) => {
                     marginTop: 100
                 }}
             >
-                <AwesomeAlert
-                    show={showAlert}
-                    showProgress={false}
-                    title="SUCCESS"
-                    message={alertMsg}
-                    closeOnTouchOutside={true}
-                    closeOnHardwareBackPress={false}
-                    showCancelButton={false}
-                    showConfirmButton={false}
-                    onDismiss={() => {
-                        navigation.replace('Home')
-                    }}
-                />
+                
                 <Text style={styles.headerText}>Change your Password</Text>
                 <View>
                     <Text style={styles.text}>
@@ -157,7 +157,7 @@ const ChangePassword = ({ navigation }) => {
                                     setseeOldPassword(true)
                             }}
                         >
-                            <Ionicons name={seeOldPassword ? 'ios-eye-off-outline' : 'ios-eye-outline'} size={20} color="rgba(0,0,0,0.3)" />
+                            <Ionicons name={seeOldPassword ? 'eye-off' : 'eye'} size={20} color="rgba(0,0,0,0.3)" />
                         </Pressable>
                         {oldPasswordError !== null ? <MaterialIcons name="error" style={styles.iconRight} size={24} color="red" /> : null}
                     </View>
@@ -207,7 +207,7 @@ const ChangePassword = ({ navigation }) => {
                                     setSeePd(true)
                             }}
                         >
-                            <Ionicons name={seePd ? 'ios-eye-off-outline' : 'ios-eye-outline'} size={20} color="rgba(0,0,0,0.3)" />
+                            <Ionicons name={seePd ? 'eye-off' : 'eye'} size={20} color="rgba(0,0,0,0.3)" />
                         </Pressable>
                         {passwordError ? <MaterialIcons name="error" style={styles.iconRight} size={24} color="red" /> : null}
                     </View>
@@ -258,7 +258,7 @@ const ChangePassword = ({ navigation }) => {
                                     setSeeCPd(true)
                             }}
                         >
-                            <Ionicons name={seeCPd ? 'ios-eye-off-outline' : 'ios-eye-outline'} size={20} color="rgba(0,0,0,0.3)" />
+                            <Ionicons name={seeCPd ? 'eye-off' : 'eye'} size={20} color="rgba(0,0,0,0.3)" />
                         </Pressable>
                         {passwordError ? <MaterialIcons name="error" style={styles.iconRight} size={24} color="red" /> : null}
                     </View>
@@ -269,6 +269,9 @@ const ChangePassword = ({ navigation }) => {
                         </>
                     ) : null}
                 </View>
+
+                <SuccessBox message={alertMsg} />
+
                 <SubmitButton loading={loading} disabled={loading} handleSubmit={handleSub} title={'Set Password'} />
             </View>
         </ScrollView>

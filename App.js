@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AntDesign, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -11,7 +11,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
 import * as Updates from 'expo-updates';
-import { Link, NavigationContainer } from '@react-navigation/native';
+import { Link, NavigationContainer, getFocusedRouteNameFromRoute, useRoute } from '@react-navigation/native';
 import FirstScreen from './screens/Onboarding/FirstScreen';
 import Welcome from './screens/Onboarding/Welcome';
 import Login from './screens/Auth/SignIn/Login';
@@ -28,6 +28,11 @@ import Profile from './screens/User/Profile/Profile';
 import Settings from './screens/User/Security/Settings';
 import Airtime from './screens/User/Services/Airtime/Airtime';
 import Data from './screens/User/Services/Data/Data';
+import query from './constants/query';
+import Help from './screens/Help';
+import ChangePassword from './screens/User/Security/ChangePassword';
+import EditInfo from './screens/User/Profile/EditInfo';
+import Fund from './screens/User/Wallet/Fund';
 
 
 
@@ -59,7 +64,6 @@ async function registerForPushNotificationsAsync() {
             return;
         }
         token = (await Notifications.getExpoPushTokenAsync()).data;
-        console.log(token);
     } else {
         console.log('Must use physical device for Push Notifications');
     }
@@ -68,7 +72,7 @@ async function registerForPushNotificationsAsync() {
 }
 
 
-const App = () => {
+const App = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [initialName, setInitialName] = useState('');
 
@@ -125,6 +129,7 @@ const App = () => {
 
     useEffect(() => {
         isOnline();
+        registerForPushNotificationsAsync();
     }, []);
 
     if (isLoading || !fontsLoaded) {
@@ -167,6 +172,7 @@ const App = () => {
                 }}
             >
                 <Stack.Screen name="Home" options={{ headerShown: false }} component={LoggedInUserNavigation} />
+                
                 <Stack.Group
                     screenOptions={{
                         headerShown: true,
@@ -207,6 +213,37 @@ const App = () => {
                         component={Data}
                     />
                 </Stack.Group>
+
+                <Stack.Group
+                    screenOptions={{
+                        headerShown: true,
+                        headerStyle: {
+                            backgroundColor: '#004AAD',
+                        },
+                        headerBackTitleStyle: {
+                            color: 'white'
+                        },
+                        headerShadowVisible: false,
+                        headerTitleStyle: {
+                            color: '#fff'
+                        },
+                        headerLeft: () => {
+                            return (
+                                <Link
+                                    to="/Home/Wallet"
+                                >
+                                    <MaterialCommunityIcons name="chevron-left-box-outline" size={25} style={{ margin: 8, padding: 2, textAlign: 'center', flex: 0, height: 30, alignItems: 'center', justifyContent: 'center', }} color="white" />
+                                </Link>
+                            )
+                        },
+                        headerTitleStyle: {
+                            color: '#fff'
+                        }
+                    }}
+                >
+                    <Stack.Screen name="FundWallet" title={'Fund Wallet'} component={Fund} />
+                </Stack.Group>
+
                 <Stack.Group screenOptions={{ headerShown: false }}>
                     {/* initial page on initial app launch */}
                     <Stack.Screen
@@ -266,13 +303,13 @@ const App = () => {
                         name="CreatePin"
                         component={CreatePin}
                     />
-                    {/* <Stack.Screen
+                    <Stack.Screen
                         options={{
                             title: 'Change Account Password',
                         }}
                         name="ChangePassword"
                         component={ChangePassword}
-                    /> */}
+                    />
                     <Stack.Screen
                         options={{
                             title: 'Settings',
@@ -280,20 +317,20 @@ const App = () => {
                         name="Settings"
                         component={Settings}
                     />
-                    {/* <Stack.Screen
+                    <Stack.Screen
                         options={{
                             title: 'Edit Personal Information',
                         }}
                         name="EditInfo"
                         component={EditInfo}
-                    /> */}
-                    {/* <Stack.Screen
+                    />
+                    <Stack.Screen
                         options={{
                             title: 'Bidsub Help Desk',
                         }}
                         name="Help"
                         component={Help}
-                    /> */}
+                    />
                 </Stack.Group>
             </Stack.Navigator>
         </NavigationContainer>
@@ -301,20 +338,21 @@ const App = () => {
 }
 
 export default App;
-
 // Logged in user screens 
 
 const LoggedInUserNavigation = ({ navigation }) => {
+    const route = useRoute();
+    const routeName = getFocusedRouteNameFromRoute(route);
     const [username, setUsername] = useState('');
     const [dp, setDp] = useState('');
-    const [tabText, setTabTex] = useState(true);
+    const [tabText, setTabTex] = useState(false);
     const [loading, setLoading] = useState(true)
     const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
     const fetchNow = async (token) => {
         const options = {
             method: "GET",
-            url: `https://bidsub.com.ng/api/v1/user`,
+            url: `${query.baseUrl}user`,
             headers: {
                 "Authorization": "Bearer " + token,
             }
@@ -328,19 +366,12 @@ const LoggedInUserNavigation = ({ navigation }) => {
                 if (response.data.data.pinset === false) {
                     navigation.replace('CreatePin')
                 }
-                AsyncStorage.getItem('tabText')
-                    .then(value => {
-                        if (value != null) {
-                            setTabTex(value)
-                        } else {
-                            setTabTex(true)
-                        }
-                    })
+                setLoading(false)
             }
         } catch (error) {
-            console.log(error)
-        } finally {
-            setLoading(false)
+            console.log(error);
+            AsyncStorage.removeItem('isLoggedIn')
+            navigation.replace('SignIn');
         }
     }
 
@@ -373,13 +404,13 @@ const LoggedInUserNavigation = ({ navigation }) => {
             screenOptions={{
                 headerShown: true,
                 tabBarActiveTintColor: '#004aad',
-                tabBarShowLabel: tabText,
+                tabBarShowLabel: false,
                 tabBarInactiveTintColor: '#fff',
                 tabBarActiveBackgroundColor: '#fff',
                 tabBarStyle: {
                     height: 85,
                     backgroundColor: "#004aad",
-                    marginBottom: 10,
+                    marginBottom: 18,
                     width: '94%',
                     marginLeft: '3%',
                     borderRadius: 40,
@@ -466,7 +497,7 @@ const LoggedInUserNavigation = ({ navigation }) => {
                 options={{
                     title: 'Services',
                     tabBarIcon: ({ focused, color, size }) => (
-                        <AntDesign name="shoppingcart" color={color} size={focused ? 35 : 30} />
+                        <MaterialIcons name="miscellaneous-services" color={color} size={focused ? 35 : 30} />
                     ),
                     tabBarLabel: 'Services',
                     headerTitle: () => {
@@ -513,7 +544,7 @@ const LoggedInUserNavigation = ({ navigation }) => {
                 options={{
                     title: 'Profile',
                     tabBarIcon: ({ focused, color, size }) => (
-                        <AntDesign name="profile" color={color} size={focused ? 35 : 30} />
+                        <AntDesign name="user" color={color} size={focused ? 35 : 30} />
                     ),
                     tabBarLabel: 'Profile',
                     headerTitle: () => {

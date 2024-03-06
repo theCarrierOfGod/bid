@@ -1,22 +1,27 @@
-import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Image } from 'expo-image';
 import axios from 'axios'
 import { useIsFocused } from '@react-navigation/native';
 import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
+import SplashTwo from '../../Onboarding/SplashTwo';
+import query from '../../../constants/query';
+import AwesomeAlert from 'react-native-awesome-alerts';
+
 
 const Profile = ({ navigation }) => {
     const isFocused = useIsFocused();
     const [error, setError] = useState(null);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('')
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [token, setToken] = useState('');
+    const [showAlert, setShowAlert] = useState(false)
+
     const fetchNow = async (token) => {
         const options = {
             method: "GET",
-            url: `https://bidsub.com.ng/api/v1/user`,
+            url: `${query.baseUrl}user`,
             headers: {
                 "Authorization": "Bearer " + token,
             }
@@ -27,9 +32,13 @@ const Profile = ({ navigation }) => {
             if (response.data) {
                 setName(response.data.data.name);
                 setEmail(response.data.data.email);
+                setIsLoading(false);
+            } else {
+                navigation.navigate('Home');
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            navigation.navigate('Home');
         }
     }
 
@@ -46,10 +55,13 @@ const Profile = ({ navigation }) => {
                 })
         } catch (error) {
             console.log(error);
+            navigation.navigate('Home');
         }
     }
 
     const logMeOut = async () => {
+        setShowAlert(true)
+
         const options = {
             method: "POST",
             url: `https://bidsub.com.ng/api/v1/auth/logout`,
@@ -59,26 +71,43 @@ const Profile = ({ navigation }) => {
         };
 
         try {
-            const response = await axios.request(options);
-            console.log(response)
+            await axios.request(options);
             AsyncStorage.removeItem('UserName');
             AsyncStorage.removeItem('isLoggedIn');
-            navigation.replace('Welcome');
+            setShowAlert(false);
+            navigation.replace('SignIn');
         } catch (error) {
             console.log(error)
+            setShowAlert(false);
         }
     }
 
     useEffect(() => {
         isOnline();
+        setShowAlert(false)
     }, [isFocused]);
+
+    if (isLoading) {
+        return <SplashTwo />
+    }
+
     return (
         <ScrollView>
+            <AwesomeAlert
+                show={showAlert}
+                showProgress={false}
+                message={"Signing out..."}
+                closeOnTouchOutside={false}
+                closeOnHardwareBackPress={false}
+                showCancelButton={false}
+                showConfirmButton={false}
+                confirmText="Proceed"
+            />
             <View style={[styles.aCenter, styles.row]}>
                 <View>
                     <Text style={[styles.row, styles.dets]}>
-                        Name:  
-                         {name}
+                        Name:
+                        {name}
                     </Text>
                     <Text style={[styles.row, styles.dets]}>
                         Email: {email}
@@ -193,7 +222,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     row: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginTop: 18
     },
     growOne: {
         flexGrow: 1
@@ -258,5 +288,8 @@ const styles = StyleSheet.create({
         color: '#004AAD',
         marginHorizontal: 15,
         marginTop: 5
+    },
+    messageStyle: {
+        fontFamily: 'Ubuntu-Medium',
     }
 })

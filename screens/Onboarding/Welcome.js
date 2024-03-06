@@ -60,7 +60,7 @@ const Welcome = ({ navigation }) => {
 
             <Pressable
                 style={styles.button}
-                onPress={() => navigation.replace('SignIn')}
+                onPress={() => navigation.navigate('SignIn')}
             >
                 <Text style={{ color: '#004aad', fontSize: 16, fontWeight: 700 }}>Sign In</Text>
             </Pressable>

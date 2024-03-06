@@ -70,23 +70,18 @@ const Login = ({ navigation }) => {
         >
             <KeyboardAvoidingView
                 style={{
-                    marginTop: '50%',
+                    marginTop: '100%',
                     backgroundColor: '#ffffff',
                     flex: 1,
-                    justifyContent: 'center',
                     borderTopEndRadius: 30,
                     borderTopStartRadius: 30,
+                    justifyContent: 'center'
                 }}
             >
                 <View
                     style={{
                         marginBottom: 80,
                         marginTop: 20,
-                        // backgroundColor: '#ffffff',
-                        // flex: 1,
-                        // justifyContent: 'center',
-                        // borderTopEndRadius: 20,
-                        // borderTopStartRadius: 20,
                     }}
                 >
 
