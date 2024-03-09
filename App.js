@@ -33,6 +33,7 @@ import Help from './screens/Help';
 import ChangePassword from './screens/User/Security/ChangePassword';
 import EditInfo from './screens/User/Profile/EditInfo';
 import Fund from './screens/User/Wallet/Fund';
+import TransactionDetail from './screens/User/Wallet/TransactionDetail';
 
 
 
@@ -172,7 +173,7 @@ const App = ({ navigation }) => {
                 }}
             >
                 <Stack.Screen name="Home" options={{ headerShown: false }} component={LoggedInUserNavigation} />
-                
+
                 <Stack.Group
                     screenOptions={{
                         headerShown: true,
@@ -211,6 +212,42 @@ const App = ({ navigation }) => {
                             title: 'Data Purchase'
                         }}
                         component={Data}
+                    />
+                </Stack.Group>
+
+                <Stack.Group
+                    screenOptions={{
+                        headerShown: false,
+                        headerStyle: {
+                            backgroundColor: '#004AAD',
+                        },
+                        headerBackTitleStyle: {
+                            color: 'white',
+
+                        },
+                        headerShadowVisible: false,
+                        headerLeft: () => {
+                            return (
+                                <Pressable
+                                    onPress={() => {
+                                        navigation.goBack();
+                                    }}
+                                >
+                                    <MaterialCommunityIcons name="chevron-left-box-outline" size={30} style={{ margin: 8, padding: 2, textAlign: 'center', flex: 0, height: 30, alignItems: 'center', justifyContent: 'center', }} color="white" />
+                                </Pressable>
+                            )
+                        },
+                        headerTitleStyle: {
+                            color: '#fff',
+                        }
+                    }}
+                >
+                    <Stack.Screen
+                        name="TransactionDetail"
+                        options={{
+                            title: 'Transaction Detail'
+                        }}
+                        component={TransactionDetail}
                     />
                 </Stack.Group>
 
@@ -552,7 +589,7 @@ const LoggedInUserNavigation = ({ navigation }) => {
                             <Text
                                 style={styles.headerText}
                             >
-                                PROFILE
+                                MY PROFILE
                             </Text>
                         )
                     },
@@ -560,6 +597,7 @@ const LoggedInUserNavigation = ({ navigation }) => {
                         backgroundColor: '#004AAD',
                     },
                     headerShadowVisible: false,
+                    // headerShown: false
                 }}
             />
         </Tab.Navigator>
@@ -571,11 +609,12 @@ const LoggedInUserNavigation = ({ navigation }) => {
 const styles = StyleSheet.create({
     headerText: {
         fontSize: 34,
-        fontFamily: 'Rubik-Regular',
+        fontFamily: 'Ubuntu-Regular',
         fontWeight: 'bold',
         marginTop: 10,
         lineHeight: 35,
         color: '#ffffff',
+        textAlign: 'center'
     },
     image: {
         width: 40,

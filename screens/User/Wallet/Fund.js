@@ -127,7 +127,8 @@ const Fund = ({ navigation }) => {
 
     const purchaseAirtime = async (data) => {
         setIsLoading(true);
-        setAmountError(null)
+        setAmountError(null);
+        setMessage('')
 
         try {
             const response = await axios.post(`${query.baseUrl}wallet`, data, {
@@ -137,17 +138,17 @@ const Fund = ({ navigation }) => {
             });
 
             if (response.data) {
-                console.log(response)
                 scheduleNotification(toPay);
                 setAmount(0);
-                setToPay(0)
-                // setTimeout(() => {
-                //     setSuccess(false);
-                //     navigation.goBack();
-                // }, 3000);
+                setToPay(0);
+                setMessage(response.data.message)
+                setTimeout(() => {
+                    setSuccess(false);
+                    navigation.goBack();
+                }, 1000);
             } else {
                 console.log('error')
-                setAmountError(response.data.error.message);
+                setAmountError(response.data.error);
             }
         } catch (error) {
             console.log(error);

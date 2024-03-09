@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios'
@@ -7,6 +7,7 @@ import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
 import SplashTwo from '../../Onboarding/SplashTwo';
 import query from '../../../constants/query';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import { Image } from 'react-native';
 
 
 const Profile = ({ navigation }) => {
@@ -16,7 +17,8 @@ const Profile = ({ navigation }) => {
     const [email, setEmail] = useState('')
     const [isLoading, setIsLoading] = useState(true);
     const [token, setToken] = useState('');
-    const [showAlert, setShowAlert] = useState(false)
+    const [showAlert, setShowAlert] = useState(false);
+    const [phone, setPhone] = useState('');
 
     const fetchNow = async (token) => {
         const options = {
@@ -32,6 +34,7 @@ const Profile = ({ navigation }) => {
             if (response.data) {
                 setName(response.data.data.name);
                 setEmail(response.data.data.email);
+                setPhone(response.data.data.phonenumber)
                 setIsLoading(false);
             } else {
                 navigation.navigate('Home');
@@ -92,7 +95,11 @@ const Profile = ({ navigation }) => {
     }
 
     return (
-        <ScrollView>
+        <SafeAreaView
+            style={{
+                flex: 1,
+            }}
+        >
             <AwesomeAlert
                 show={showAlert}
                 showProgress={false}
@@ -103,112 +110,137 @@ const Profile = ({ navigation }) => {
                 showConfirmButton={false}
                 confirmText="Proceed"
             />
-            <View style={[styles.aCenter, styles.row]}>
-                <View>
+
+            <View
+
+                style={{
+                    flex: 1,
+                    backgroundColor: '#fff',
+                    flexDirection: 'column',
+                    justifyContent: 'space-evenly',
+                    alignContent: 'space-between',
+                    display: 'flex'
+                }}>
+                <View style={[styles.aCenter, styles.jCenter, styles.topSpace]}>
+                    <Image
+                        source={require('../../../assets/images/error.png')}
+                        style={{ width: 150, height: 150, marginTop: 50 }}
+                    />
                     <Text style={[styles.row, styles.dets]}>
-                        Name:
                         {name}
                     </Text>
                     <Text style={[styles.row, styles.dets]}>
-                        Email: {email}
+                        {phone}
                     </Text>
+                    <Text style={[styles.row, styles.dets]}>
+                        {error}
+                    </Text>
+                </View>
+
+                <View
+                    style={{
+                        marginTop: 15,
+                        width: '96%',
+                        marginHorizontal: '2%',
+                        backgroundColor: '#f3f5f7',
+                        borderRadius: 10,
+                        padding: 10,
+                        alignSelf: 'center'
+                    }}
+                >
+                    <Pressable style={[styles.row, styles.listHover]}
+                        hoverStyle={[styles.listHover]}
+                        activeStyle={[styles.listHover]}
+                        onPress={() => {
+                            navigation.navigate('EditInfo');
+                        }}
+                    >
+                        <View style={styles.icon}>
+                            <AntDesign name="user" size={40} color="#004aad" />
+                        </View>
+                        <View style={[styles.jCenter, styles.growOne]}>
+                            <Text style={styles.infoText}>
+                                Personal Information
+                            </Text>
+                            <Text style={styles.justText}>
+                                Edit your personal information
+                            </Text>
+                        </View>
+                        <View style={[styles.jCenter]}>
+                            <AntDesign name="right" size={24} style={styles.m5} color="#004aad" />
+                        </View>
+                    </Pressable>
+
+                    <Pressable style={[styles.row, styles.listHover]}
+                        hoverStyle={[styles.listHover]}
+                        activeStyle={[styles.listHover]}
+                        onPress={() => {
+                            navigation.navigate('Settings');
+                        }}
+                    >
+                        <View style={styles.icon}>
+                            <AntDesign name="setting" size={40} color="#004aad" />
+                        </View>
+                        <View style={[styles.jCenter, styles.growOne]}>
+                            <Text style={styles.infoText}>
+                                Settings
+                            </Text>
+                            <Text style={styles.justText}>
+                                Account, notifications
+                            </Text>
+                        </View>
+                        <View style={[styles.jCenter]}>
+                            <AntDesign name="right" size={24} style={styles.m5} color="#004aad" />
+                        </View>
+                    </Pressable>
+
+                    <Pressable style={[styles.row, styles.listHover]}
+                        hoverStyle={[styles.listHover]}
+                        activeStyle={[styles.listHover]}
+                        onPress={() => {
+                            navigation.navigate('Help');
+                        }}
+                    >
+                        <View style={styles.icon}>
+                            <Ionicons name="help-circle-outline" size={40} color="#004aad" />
+                        </View>
+                        <View style={[styles.jCenter, styles.growOne]}>
+                            <Text style={styles.infoText}>
+                                Help & Support
+                            </Text>
+                            <Text style={styles.justText}>
+                                Help or contact Bidsub
+                            </Text>
+                        </View>
+                        <View style={[styles.jCenter]}>
+                            <AntDesign name="right" size={24} style={styles.m5} color="#004aad" />
+                        </View>
+                    </Pressable>
+
+                    <Pressable style={[styles.aCenter, styles.row, styles.listHover]}
+                        hoverStyle={[styles.listHover]}
+                        activeStyle={[styles.listHover]}
+                        onPress={() => {
+                            logMeOut();
+                        }}
+                    >
+                        <View style={styles.icon}>
+                            <FontAwesome name="sign-out" size={40} color="#004aad" />
+                        </View>
+                        <View style={[styles.jCenter]}>
+                            <Text style={styles.infoText}>
+                                Sign Out
+                            </Text>
+                            <Text style={styles.justText}>
+                                Sign out of your account
+                            </Text>
+
+                        </View>
+                    </Pressable>
+
                 </View>
             </View>
-
-            <Text style={[styles.row, styles.dets]}>
-                {error}
-            </Text>
-
-            <Pressable style={[styles.row, styles.listHover]}
-                hoverStyle={[styles.listHover]}
-                activeStyle={[styles.listHover]}
-                onPress={() => {
-                    navigation.navigate('EditInfo');
-                }}
-            >
-                <View style={styles.icon}>
-                    <AntDesign name="user" size={40} color="#004aad" />
-                </View>
-                <View style={[styles.jCenter, styles.growOne]}>
-                    <Text style={styles.infoText}>
-                        Personal Information
-                    </Text>
-                    <Text style={styles.justText}>
-                        Edit your personal information
-                    </Text>
-                </View>
-                <View style={[styles.jCenter]}>
-                    <AntDesign name="right" size={24} style={styles.m5} color="#004aad" />
-                </View>
-            </Pressable>
-
-            <Pressable style={[styles.row, styles.listHover]}
-                hoverStyle={[styles.listHover]}
-                activeStyle={[styles.listHover]}
-                onPress={() => {
-                    navigation.navigate('Settings');
-                }}
-            >
-                <View style={styles.icon}>
-                    <AntDesign name="setting" size={40} color="#004aad" />
-                </View>
-                <View style={[styles.jCenter, styles.growOne]}>
-                    <Text style={styles.infoText}>
-                        Settings
-                    </Text>
-                    <Text style={styles.justText}>
-                        Account, notifications
-                    </Text>
-                </View>
-                <View style={[styles.jCenter]}>
-                    <AntDesign name="right" size={24} style={styles.m5} color="#004aad" />
-                </View>
-            </Pressable>
-
-            <Pressable style={[styles.row, styles.listHover]}
-                hoverStyle={[styles.listHover]}
-                activeStyle={[styles.listHover]}
-                onPress={() => {
-                    navigation.navigate('Help');
-                }}
-            >
-                <View style={styles.icon}>
-                    <Ionicons name="help-circle-outline" size={40} color="#004aad" />
-                </View>
-                <View style={[styles.jCenter, styles.growOne]}>
-                    <Text style={styles.infoText}>
-                        Help & Support
-                    </Text>
-                    <Text style={styles.justText}>
-                        Help or contact Bidsub
-                    </Text>
-                </View>
-                <View style={[styles.jCenter]}>
-                    <AntDesign name="right" size={24} style={styles.m5} color="#004aad" />
-                </View>
-            </Pressable>
-
-            <Pressable style={[styles.aCenter, styles.row, styles.listHover]}
-                hoverStyle={[styles.listHover]}
-                activeStyle={[styles.listHover]}
-                onPress={() => {
-                    logMeOut();
-                }}
-            >
-                <View style={styles.icon}>
-                    <FontAwesome name="sign-out" size={40} color="#004aad" />
-                </View>
-                <View style={[styles.jCenter]}>
-                    <Text style={styles.infoText}>
-                        Sign Out
-                    </Text>
-                    <Text style={styles.justText}>
-                        Sign out of your account
-                    </Text>
-
-                </View>
-            </Pressable>
-        </ScrollView>
+        </SafeAreaView>
     )
 }
 
@@ -283,7 +315,7 @@ const styles = StyleSheet.create({
         marginTop: 8
     },
     dets: {
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: 900,
         color: '#004AAD',
         marginHorizontal: 15,
@@ -291,5 +323,8 @@ const styles = StyleSheet.create({
     },
     messageStyle: {
         fontFamily: 'Ubuntu-Medium',
+    },
+    topSpace: {
+        marginTop: 40
     }
 })

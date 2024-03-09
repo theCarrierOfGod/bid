@@ -10,23 +10,24 @@ const History = ({ navigation, refreshing }) => {
     const isFocused = useIsFocused();
     const [data, setData] = useState([]);
     const [spinning, setSpinning] = useState(true);
-    const [error, setError] = useState('')
+    const [error, setError] = useState('');
+    const [token, setToken] = useState('');
 
     const fetchNow = async (user) => {
-        console.log('fetching')
         try {
             const response = await axios.get(`${query.baseUrl}wallet`, {
                 headers: {
                     Authorization: 'Bearer ' + user
                 }
             });
-            if (response.data.data) {
+            if (response.data) {
                 setData(response.data.data)
             } else {
                 setError(response.data.error)
             }
         } catch (error) {
-            setError(error.message)
+            setError(error.message);
+            console.log(error);
         } finally {
             setSpinning(false)
         }
@@ -40,6 +41,7 @@ const History = ({ navigation, refreshing }) => {
                 .then(value => {
                     if (value != null) {
                         fetchNow(value);
+                        setToken(value);
                     } else {
                         navigation.replace('SignIn')
                     }
@@ -77,13 +79,13 @@ const History = ({ navigation, refreshing }) => {
     } else {
         screen = <View style={styles.sectionBody}>
             {data.map((item, index) => (
-                <TableStructure data={item} key={index} />
+                <TableStructure data={item} key={index} navigation={navigation} token={token} />
             ))}
         </View>
     }
     if (error.length > 0) {
         screen = <View style={{ alignItems: 'center', justifyContent: 'center', height: 200, width: '100' }}>
-            <Image source={require('../../../../assets/images/nodata.png')} style={{ width: 150, height: 150, marginTop: 50 }} />
+            <Image source={require('../../../../assets/images/error.png')} style={{ width: 150, height: 150, marginTop: 50 }} />
         </View>
     }
 
@@ -115,7 +117,6 @@ const styles = StyleSheet.create({
         flex: 0,
         justifyContent: 'center',
         marginVertical: 20,
-        paddingHorizontal: 7,
         width: '100%',
         color: 'black',
     },

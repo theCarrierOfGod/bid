@@ -37,13 +37,13 @@ const Wallet = ({ navigation }) => {
             }
         } catch (error) {
             console.log(error)
+            navigation.navigate('Dashboard')
         } finally {
             setSpinning(false)
         }
     }
 
     const isOnline = async () => {
-        setSpinning(true)
         try {
             await AsyncStorage.getItem('isLoggedIn')
                 .then(value => {
@@ -109,7 +109,7 @@ const Wallet = ({ navigation }) => {
                 </Pressable>
             </View>
             <View>
-                <History refreshing={refreshing} />
+                <History refreshing={refreshing} navigation={navigation} />
             </View>
         </ScrollView>
     )

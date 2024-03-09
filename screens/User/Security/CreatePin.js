@@ -1,6 +1,6 @@
 import { SafeAreaView, StyleSheet, Text, View, TextInput, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import SubmitButton from '../../../constants/SubmitButton';
 import query from '../../../constants/query';
 import axios from 'axios';
@@ -93,7 +93,7 @@ const CreatePin = ({ navigation }) => {
             });
             if (response.data.success) {
                 setSuccess(response.data.message),
-                setTransactionPin('');
+                    setTransactionPin('');
                 setPassword('');
                 setTimeout(() => {
                     navigation.navigate('Home');
@@ -148,7 +148,7 @@ const CreatePin = ({ navigation }) => {
 
                 {/* pin */}
                 <View style={{ width: '90%', alignSelf: 'center', marginVertical: 15 }}>
-                    <MaterialIcons name={'password'} size={20} style={styles.iconLeft} color="rgba(0,0,0,0.3)" />
+                    <Ionicons name={'key-outline'} size={20} style={styles.iconLeft} color="rgba(0,0,0,0.3)" />
                     <TextInput
                         style={{
                             borderWidth: 0,
@@ -202,7 +202,7 @@ const CreatePin = ({ navigation }) => {
 
                 {/* password */}
                 <View style={{ width: '90%', alignSelf: 'center', marginVertical: 15 }}>
-                    <MaterialIcons name={'password'} size={20} style={styles.iconLeft} color="rgba(0,0,0,0.3)" />
+                <MaterialCommunityIcons name="form-textbox-password" size={20} style={styles.iconLeft} color="rgba(0,0,0,0.3)" />
                     <TextInput
                         style={{
                             borderWidth: 0,
