@@ -105,6 +105,17 @@ const Fund = ({ navigation }) => {
         });
     }
 
+    async function scheduleNotification2(amount) {
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Wallet Funding",
+                body: "Your account was not funded with #" + amount,
+                data: { data: 'Add here' },
+            },
+            trigger: { seconds: 1 },
+        });
+    }
+
     const onSuccess = (reference) => {
         const data = {
             amount: toPay,
@@ -113,6 +124,7 @@ const Fund = ({ navigation }) => {
             method: 'paystack'
         }
         purchaseAirtime(data);
+        scheduleNotification(toPay);
     };
 
     const onClose = () => {
@@ -122,7 +134,8 @@ const Fund = ({ navigation }) => {
             status: "failed",
             method: 'paystack'
         }
-        purchaseAirtime(data)
+        purchaseAirtime(data);
+        scheduleNotification2(toPay);
     }
 
     const purchaseAirtime = async (data) => {
@@ -138,7 +151,7 @@ const Fund = ({ navigation }) => {
             });
 
             if (response.data) {
-                scheduleNotification(toPay);
+                
                 setAmount(0);
                 setToPay(0);
                 setMessage(response.data.message)
